@@ -10,11 +10,27 @@ It shows current Steam prices and owned status for the regions/accounts you conf
 
 [中文说明](README.zh-CN.md)
 
-## Example
+## Screenshots
 
-Real Steam client screenshot using Cyberpunk 2077, appid `1091500`. The API key and account identifiers are not shown.
+Real Steam client screenshots using Cyberpunk 2077, appid `1091500`. The API key and account identifiers are not shown.
 
-![Cyberpunk 2077 Steam client panel](docs/assets/steam-client-cyberpunk-2077-panel.png)
+### Store page placement
+
+The panel appears below Steam's purchase and content blocks, so it stays close to the place where you decide whether to buy.
+
+![Panel placement on a Steam store page](docs/assets/steam-client-placement.png)
+
+### Helper panel
+
+The panel keeps the current Steam regional prices, approximate display-currency values, owned status, refresh/settings actions, and SteamDB manual-check link in one compact block.
+
+![Steam Multi-Region Helper panel](docs/assets/steam-client-helper-panel.png)
+
+### Owned status and regional rows
+
+Owned status is shown per configured account row. Regional prices are still shown in Steam's original currency, with an approximate comparison value below.
+
+![Owned status and regional price rows](docs/assets/steam-client-owned-price-rows.png)
 
 ## What it does
 

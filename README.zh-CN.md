@@ -1,4 +1,4 @@
-# Steam Multi-Region Helper
+﻿# Steam Multi-Region Helper
 
 一个给 Steam 桌面客户端用的小型非官方 Millennium 插件。
 
@@ -6,11 +6,27 @@
 
 [English README](README.md)
 
-## 参考截图
+## 截图
 
 下面是《赛博朋克 2077》（appid `1091500`）商品页里的真实 Steam 客户端截图。截图不展示 API Key 和账号标识。
 
-![Cyberpunk 2077 Steam 客户端面板](docs/assets/steam-client-cyberpunk-2077-panel.png)
+### 商品页中的位置
+
+面板会出现在 Steam 购买区和内容区下面，离你决定是否购买的位置很近。
+
+![Steam 商品页中的面板位置](docs/assets/steam-client-placement.png)
+
+### 助手面板
+
+面板把当前 Steam 各区价格、约合展示货币、拥有状态、刷新/设置按钮和 SteamDB 手动核验入口放在一个紧凑区域里。
+
+![Steam Multi-Region Helper 面板](docs/assets/steam-client-helper-panel.png)
+
+### 拥有状态和地区价格行
+
+拥有状态按你配置的账号行展示。地区价格仍然保留 Steam 返回的原始货币，下面显示约合金额。
+
+![拥有状态和地区价格行](docs/assets/steam-client-owned-price-rows.png)
 
 ## 它能做什么
 

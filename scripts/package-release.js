@@ -45,7 +45,9 @@ function collectFiles(entry, folderName) {
         walk(child);
       } else if (childStat.isFile()) {
         const relative = path.relative(root, child).replaceAll("\\", "/");
-        files.push({ sourcePath: child, zipPath: `${folderName}/${relative}` });
+        if (!relative.startsWith("docs/assets/")) {
+          files.push({ sourcePath: child, zipPath: `${folderName}/${relative}` });
+        }
       }
     }
   };
@@ -181,5 +183,6 @@ module.exports = {
   makeReleaseFolderName,
   makeReleaseZipName,
   getReleaseEntries,
+  collectFiles,
   createReleasePackage,
 };

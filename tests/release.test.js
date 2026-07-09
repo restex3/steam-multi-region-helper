@@ -12,4 +12,11 @@ assert.deepStrictEqual(
   ["plugin.json", "README.md", "README.zh-CN.md", "CONTRIBUTING.md", "LICENSE", "CHANGELOG.md", "docs", ".millennium", "backend"]
 );
 
+assert.strictEqual(
+  release.collectFiles({ source: "docs" }, "steam-multi-region-helper").some((entry) =>
+    entry.zipPath.includes("docs/assets/")
+  ),
+  false
+);
+
 console.log("release tests passed");
