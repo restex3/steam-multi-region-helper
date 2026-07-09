@@ -40,9 +40,31 @@
     { cc: "KZ", label: "Kazakhstan" },
   ];
 
+  const DISPLAY_CURRENCY_OPTIONS = [
+    { code: "CNY", label: "Chinese Yuan" },
+    { code: "USD", label: "US Dollar" },
+    { code: "EUR", label: "Euro" },
+    { code: "JPY", label: "Japanese Yen" },
+    { code: "HKD", label: "Hong Kong Dollar" },
+    { code: "TWD", label: "New Taiwan Dollar" },
+    { code: "RUB", label: "Russian Ruble" },
+    { code: "TRY", label: "Turkish Lira" },
+    { code: "UAH", label: "Ukrainian Hryvnia" },
+    { code: "GBP", label: "British Pound" },
+  ];
+
   function findCountryOption(value) {
     const cc = normalizeCountryCode(value);
     return COUNTRY_OPTIONS.find((country) => country.cc === cc) || null;
+  }
+
+  function findDisplayCurrency(value) {
+    const code = String(value || "").trim().toUpperCase();
+    return DISPLAY_CURRENCY_OPTIONS.find((currency) => currency.code === code) || null;
+  }
+
+  function normalizeDisplayCurrency(value) {
+    return findDisplayCurrency(value)?.code || "CNY";
   }
 
   function extractAppId(value) {
@@ -143,7 +165,19 @@
     return cnyRates;
   }
 
-  function rankRegionalPrices(accountPrices, cnyRatesByCurrency) {
+  function convertCurrencyAmount(amount, sourceCurrency, targetCurrency, cnyRatesByCurrency) {
+    const sourceRate = cnyRatesByCurrency[String(sourceCurrency || "").toUpperCase()];
+    const targetRate = cnyRatesByCurrency[String(targetCurrency || "").toUpperCase()];
+    if (!Number.isFinite(amount) || !Number.isFinite(sourceRate) || !Number.isFinite(targetRate) || targetRate <= 0) {
+      return Number.POSITIVE_INFINITY;
+    }
+    const cnyAmount = amount * sourceRate;
+    return cnyAmount / targetRate;
+  }
+
+  function rankRegionalPrices(accountPrices, cnyRatesByCurrency, displayCurrency = "CNY") {
+    const normalizedDisplayCurrency = normalizeDisplayCurrency(displayCurrency);
+
     return accountPrices
       .map((entry) => {
         if (!entry.price.available) {
@@ -152,23 +186,28 @@
             label: entry.label,
             available: false,
             price: entry.price,
-            cnyAmount: Number.POSITIVE_INFINITY,
+            displayCurrency: normalizedDisplayCurrency,
+            displayAmount: Number.POSITIVE_INFINITY,
           };
         }
 
-        const rate = cnyRatesByCurrency[entry.price.currency];
-        const cnyAmount =
-          typeof rate === "number" ? minorToMajor(entry.price.finalMinor) * rate : Number.POSITIVE_INFINITY;
+        const displayAmount = convertCurrencyAmount(
+          minorToMajor(entry.price.finalMinor),
+          entry.price.currency,
+          normalizedDisplayCurrency,
+          cnyRatesByCurrency
+        );
 
         return {
           accountKey: entry.accountKey,
           label: entry.label,
-          available: Number.isFinite(cnyAmount),
+          available: Number.isFinite(displayAmount),
           price: entry.price,
-          cnyAmount,
+          displayCurrency: normalizedDisplayCurrency,
+          displayAmount,
         };
       })
-      .sort((a, b) => a.cnyAmount - b.cnyAmount);
+      .sort((a, b) => a.displayAmount - b.displayAmount);
   }
 
   function parseOwnedAppIds(webApiBody) {
@@ -183,11 +222,12 @@
       .map((account) => account.key);
   }
 
-  function formatCnyAmount(value) {
-    return Number.isFinite(value) ? `approx CNY ${value.toFixed(2)}` : "";
+  function formatDisplayAmount(value, displayCurrency = "CNY") {
+    const currency = normalizeDisplayCurrency(displayCurrency);
+    return Number.isFinite(value) ? `approx ${currency} ${value.toFixed(2)}` : "";
   }
 
-  function buildRecommendation(owners, rankedPrices, accounts) {
+  function buildRecommendation(owners, rankedPrices, accounts, displayCurrency = "CNY") {
     const labelByKey = new Map(accounts.map((account) => [account.key, account.label]));
 
     if (owners.length > 0) {
@@ -205,14 +245,17 @@
     return {
       type: "buy",
       accountKey: cheapest.accountKey,
-      text: `Best current price: ${cheapest.label}, ${formatCnyAmount(cheapest.cnyAmount)}`,
+      text: `Best current price: ${cheapest.label}, ${formatDisplayAmount(cheapest.displayAmount, displayCurrency)}`,
     };
   }
 
   const api = {
     DEFAULT_ACCOUNTS,
     COUNTRY_OPTIONS,
+    DISPLAY_CURRENCY_OPTIONS,
     findCountryOption,
+    findDisplayCurrency,
+    normalizeDisplayCurrency,
     extractAppId,
     normalizeCountryCode,
     normalizeAccounts,
@@ -220,10 +263,11 @@
     normalizeStorePrice,
     minorToMajor,
     buildCnyRates,
+    convertCurrencyAmount,
     rankRegionalPrices,
     parseOwnedAppIds,
     findOwners,
-    formatCnyAmount,
+    formatDisplayAmount,
     buildRecommendation,
   };
 

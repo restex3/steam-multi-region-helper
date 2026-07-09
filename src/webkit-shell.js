@@ -58,6 +58,7 @@ let PluginEntryPointMain = function () {
     function defaultSettings() {
       return {
         apiKey: "",
+        displayCurrency: "CNY",
         accounts: core.DEFAULT_ACCOUNTS.map((account) => ({ ...account })),
       };
     }
@@ -76,6 +77,7 @@ let PluginEntryPointMain = function () {
 
       return {
         apiKey: legacy.apiKey || "",
+        displayCurrency: "CNY",
         accounts: legacyOrder.map(([key, label, cc]) => ({
           key,
           label,
@@ -90,6 +92,7 @@ let PluginEntryPointMain = function () {
       const settings = {
         ...defaultSettings(),
         ...stored,
+        displayCurrency: core.normalizeDisplayCurrency(stored.displayCurrency),
         accounts: core.normalizeAccounts(stored.accounts).length
           ? core.normalizeAccounts(stored.accounts)
           : defaultSettings().accounts,
@@ -260,6 +263,14 @@ let PluginEntryPointMain = function () {
       `;
     }
 
+    function currencyOptions(selectedCurrency) {
+      const current = core.normalizeDisplayCurrency(selectedCurrency);
+      return core.DISPLAY_CURRENCY_OPTIONS.map(
+        (currency) =>
+          `<option value="${escapeHtml(currency.code)}"${currency.code === current ? " selected" : ""}>${escapeHtml(currency.code)} - ${escapeHtml(currency.label)}</option>`
+      ).join("");
+    }
+
     function collectSettings(form) {
       const formData = new FormData(form);
       const accountRows = Array.from(form.querySelectorAll(".smrh-account-row"));
@@ -278,6 +289,7 @@ let PluginEntryPointMain = function () {
 
       return {
         apiKey: String(formData.get("apiKey") || "").trim(),
+        displayCurrency: core.normalizeDisplayCurrency(formData.get("displayCurrency")),
         accounts: core.normalizeAccounts(accounts),
       };
     }
@@ -298,6 +310,12 @@ let PluginEntryPointMain = function () {
           <div class="smrh-field">
             <label>Steam Web API Key</label>
             <input name="apiKey" type="password" autocomplete="off" value="${escapeHtml(settings.apiKey)}">
+          </div>
+          <div class="smrh-field">
+            <label>Display currency</label>
+            <select name="displayCurrency">
+              ${currencyOptions(settings.displayCurrency)}
+            </select>
           </div>
           <div class="smrh-account-list" id="smrh-account-list">
             ${editableAccounts.map(accountRow).join("")}
@@ -460,10 +478,11 @@ let PluginEntryPointMain = function () {
       return { ownedByAccount, errors };
     }
 
-    function renderSummary(panel, appId, accounts, accountPrices, rates, ownedResult) {
+    function renderSummary(panel, appId, accounts, accountPrices, rates, ownedResult, settings) {
       const owners = core.findOwners(appId, ownedResult.ownedByAccount, accounts);
-      const ranked = core.rankRegionalPrices(accountPrices, rates);
-      const recommendation = core.buildRecommendation(owners, ranked, accounts);
+      const displayCurrency = core.normalizeDisplayCurrency(settings.displayCurrency);
+      const ranked = core.rankRegionalPrices(accountPrices, rates, displayCurrency);
+      const recommendation = core.buildRecommendation(owners, ranked, accounts, displayCurrency);
       const rankedByAccount = new Map(ranked.map((entry) => [entry.accountKey, entry]));
       const cheapest = ranked.find((entry) => entry.available);
 
@@ -475,14 +494,14 @@ let PluginEntryPointMain = function () {
           const priceText = entry.price.available
             ? entry.price.finalFormatted || `${(entry.price.finalMinor / 100).toFixed(2)} ${entry.price.currency}`
             : "No price";
-          const cnyText = rank ? core.formatCnyAmount(rank.cnyAmount) : "";
+          const displayText = rank ? core.formatDisplayAmount(rank.displayAmount, displayCurrency) : "";
 
           return `
             <div class="smrh-row${owned ? " owned" : ""}${best ? " best" : ""}">
               <div class="smrh-region">${escapeHtml(entry.label)} <span class="smrh-sub">(${escapeHtml(entry.cc)})</span></div>
               <div class="smrh-price">
                 <span>${escapeHtml(priceText)}</span>
-                ${cnyText ? `<small>${escapeHtml(cnyText)}</small>` : ""}
+                ${displayText ? `<small>${escapeHtml(displayText)}</small>` : ""}
               </div>
               <div class="smrh-status">${owned ? "Owned" : ""}</div>
             </div>
@@ -534,7 +553,7 @@ let PluginEntryPointMain = function () {
           loadRates(),
           loadOwned(settings, accounts, forceRefresh),
         ]);
-        renderSummary(panel, appId, accounts, accountPrices, rates, ownedResult);
+        renderSummary(panel, appId, accounts, accountPrices, rates, ownedResult, settings);
       } catch (error) {
         renderError(panel, error?.message || "Load failed");
       }

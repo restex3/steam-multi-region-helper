@@ -6,6 +6,12 @@
 
 [English README](README.md)
 
+## 参考截图
+
+下面是《赛博朋克 2077》（appid `1091500`）商品页里的真实 Steam 客户端截图。截图不展示 API Key 和账号标识。
+
+![Cyberpunk 2077 Steam 客户端面板](docs/assets/steam-client-cyberpunk-2077-panel.png)
+
 ## 它能做什么
 
 - 在 Steam 客户端商品页显示一个紧凑面板。
@@ -14,7 +20,12 @@
 - 每一行可以配置显示名、国家代码和 SteamID64。
 - 通过 Steam 商店接口查询当前价格。
 - 通过 Steam Web API 查询账号是否拥有该游戏。
+- 可以选择展示货币，用于约合金额和当前最低价排序。
 - 提供 SteamDB 链接，方便手动核验史低价格。
+
+## 已知限制
+
+- 拥有状态按 appid 判断。DLC、捆绑包、终极版、合集页的拥有关系可能更复杂，所以面板只能当作快速提示，不能保证精确覆盖所有 DLC/包体权益情况。
 
 ## 它不做什么
 
@@ -59,7 +70,7 @@ npm run package
 
 打包产物会生成在：
 
-`release\steam-multi-region-helper-v0.1.0.zip`
+`release\steam-multi-region-helper-v0.1.1.zip`
 
 ## 欢迎 PR
 

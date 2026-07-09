@@ -4,11 +4,17 @@ A small unofficial Millennium plugin for the Steam desktop client.
 
 It shows current Steam prices and owned status for the regions/accounts you configure. It is meant for users who already own multiple Steam accounts and want a quick way to avoid duplicate purchases.
 
-![Status](https://img.shields.io/badge/status-v0.1.0-blue)
+![Status](https://img.shields.io/badge/status-v0.1.1-blue)
 ![Platform](https://img.shields.io/badge/platform-Windows%20Steam-66c0f4)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
 [中文说明](README.zh-CN.md)
+
+## Example
+
+Real Steam client screenshot using Cyberpunk 2077, appid `1091500`. The API key and account identifiers are not shown.
+
+![Cyberpunk 2077 Steam client panel](docs/assets/steam-client-cyberpunk-2077-panel.png)
 
 ## What it does
 
@@ -18,7 +24,12 @@ It shows current Steam prices and owned status for the regions/accounts you conf
 - Each row has a display name, Steam country code, and optional SteamID64.
 - Compares current Steam Store prices through Steam's store appdetails endpoint.
 - Checks owned games through Steam Web API when a SteamID64 is provided.
+- Lets you choose a display currency for approximate comparisons.
 - Links to SteamDB for manual historical-price checks.
+
+## Known limits
+
+- Owned status is checked by appid. DLC, bundles, editions, and package pages can have more complicated ownership rules, so the panel should be treated as a quick hint rather than an exact entitlement audit for every DLC/package case.
 
 ## What it does not do
 
@@ -70,7 +81,7 @@ npm run package
 
 `npm run package` creates:
 
-`release\steam-multi-region-helper-v0.1.0.zip`
+`release\steam-multi-region-helper-v0.1.1.zip`
 
 ## Contributing
 

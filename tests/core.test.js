@@ -45,9 +45,16 @@ assert.deepStrictEqual(
   }
 );
 
-const cnyRates = core.buildCnyRates({ rates: { USD: 0.1375, UAH: 5.72, RUB: 10.9 } });
+assert.ok(core.DISPLAY_CURRENCY_OPTIONS.some((currency) => currency.code === "USD"));
+assert.deepStrictEqual(core.findDisplayCurrency("jpy"), { code: "JPY", label: "Japanese Yen" });
+assert.strictEqual(core.findDisplayCurrency("bad"), null);
+assert.strictEqual(core.normalizeDisplayCurrency("bad"), "CNY");
+
+const cnyRates = core.buildCnyRates({ rates: { USD: 0.1375, UAH: 5.72, RUB: 10.9, JPY: 21.6 } });
 assert.strictEqual(cnyRates.CNY, 1);
 assert.ok(cnyRates.USD > 7 && cnyRates.USD < 8);
+assert.ok(core.convertCurrencyAmount(100, "CNY", "USD", cnyRates) > 13);
+assert.ok(core.convertCurrencyAmount(100, "CNY", "USD", cnyRates) < 14);
 
 const accounts = [
   { key: "cn", label: "China", cc: "CN", steamId: "1" },
@@ -61,10 +68,24 @@ const ranked = core.rankRegionalPrices(
     { accountKey: "us", label: "US", price: { available: true, currency: "USD", finalMinor: 1349 } },
     { accountKey: "ru", label: "Russia", price: { available: false } },
   ],
-  cnyRates
+  cnyRates,
+  "CNY"
 );
 assert.strictEqual(ranked[0].accountKey, "cn");
 assert.strictEqual(ranked[2].available, false);
+assert.strictEqual(ranked[0].displayCurrency, "CNY");
+
+const usdRanked = core.rankRegionalPrices(
+  [
+    { accountKey: "cn", label: "China", price: { available: true, currency: "CNY", finalMinor: 8940 } },
+    { accountKey: "us", label: "US", price: { available: true, currency: "USD", finalMinor: 1349 } },
+  ],
+  cnyRates,
+  "USD"
+);
+assert.strictEqual(usdRanked[0].displayCurrency, "USD");
+assert.ok(usdRanked[0].displayAmount > 12);
+assert.strictEqual(core.formatDisplayAmount(usdRanked[0].displayAmount, "USD"), "approx USD 12.29");
 
 const owned = {
   cn: core.parseOwnedAppIds({ response: { games: [{ appid: 1091500 }] } }),
@@ -73,6 +94,6 @@ const owned = {
 assert.deepStrictEqual(core.findOwners("1091500", owned, accounts), ["cn"]);
 
 assert.strictEqual(core.buildRecommendation(["cn"], ranked, accounts).type, "owned");
-assert.strictEqual(core.buildRecommendation([], ranked, accounts).accountKey, "cn");
+assert.strictEqual(core.buildRecommendation([], ranked, accounts, "CNY").accountKey, "cn");
 
 console.log("core tests passed");

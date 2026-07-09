@@ -11,7 +11,7 @@ Steam Multi-Region Helper is a small Millennium plugin for the Steam desktop cli
 
 ## Install from a release zip
 
-1. Download `steam-multi-region-helper-v0.1.0.zip` from the GitHub release.
+1. Download `steam-multi-region-helper-v0.1.1.zip` from the GitHub release.
 2. Close Steam completely.
 3. Open your Steam Millennium plugin folder:
 
@@ -51,6 +51,12 @@ For custom profile URLs, open the profile in a browser and use Steam's profile d
 The settings panel has presets for common Steam country codes such as China, Russia, Turkey/MENA, Ukraine, Japan, United States, and several others.
 
 You can still choose `Custom country code` and enter any two-letter Steam country code manually. This is useful because Steam regional pricing coverage changes over time.
+
+## Display currency
+
+The settings panel lets you choose a display currency such as CNY, USD, EUR, JPY, HKD, TWD, RUB, TRY, UAH, or GBP.
+
+This only affects approximate comparison text and best-current-price ranking. The original Steam regional prices are still shown as Steam returns them.
 
 ## Troubleshooting
 

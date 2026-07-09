@@ -32,6 +32,10 @@ The plugin may request:
 - No SteamDB scraping.
 - No project-run telemetry.
 
+## Ownership check limits
+
+Owned status is checked by appid through Steam Web API. DLC, bundles, editions, and package pages can have more complicated ownership rules than a single appid. Treat owned status as a quick store-page hint, not as a full entitlement audit for every DLC or package case.
+
 ## Steam risk boundary
 
 Third-party Steam client plugins can carry compatibility and account-policy risk. This project tries to stay narrow and read-only, but it cannot provide legal or account-safety guarantees.

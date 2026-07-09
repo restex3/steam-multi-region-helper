@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.1
+
+- Add configurable display currency for approximate comparisons and best-current-price ranking.
+- Add a real Steam client Cyberpunk 2077 screenshot to the README files.
+- Document DLC, bundle, edition, and package ownership-check limits.
+- Update install and release docs for the 0.1.1 package.
+
 ## 0.1.0
 
 - Add a Steam client store-page panel through Millennium.

@@ -40,9 +40,31 @@
     { cc: "KZ", label: "Kazakhstan" },
   ];
 
+  const DISPLAY_CURRENCY_OPTIONS = [
+    { code: "CNY", label: "Chinese Yuan" },
+    { code: "USD", label: "US Dollar" },
+    { code: "EUR", label: "Euro" },
+    { code: "JPY", label: "Japanese Yen" },
+    { code: "HKD", label: "Hong Kong Dollar" },
+    { code: "TWD", label: "New Taiwan Dollar" },
+    { code: "RUB", label: "Russian Ruble" },
+    { code: "TRY", label: "Turkish Lira" },
+    { code: "UAH", label: "Ukrainian Hryvnia" },
+    { code: "GBP", label: "British Pound" },
+  ];
+
   function findCountryOption(value) {
     const cc = normalizeCountryCode(value);
     return COUNTRY_OPTIONS.find((country) => country.cc === cc) || null;
+  }
+
+  function findDisplayCurrency(value) {
+    const code = String(value || "").trim().toUpperCase();
+    return DISPLAY_CURRENCY_OPTIONS.find((currency) => currency.code === code) || null;
+  }
+
+  function normalizeDisplayCurrency(value) {
+    return findDisplayCurrency(value)?.code || "CNY";
   }
 
   function extractAppId(value) {
@@ -143,7 +165,19 @@
     return cnyRates;
   }
 
-  function rankRegionalPrices(accountPrices, cnyRatesByCurrency) {
+  function convertCurrencyAmount(amount, sourceCurrency, targetCurrency, cnyRatesByCurrency) {
+    const sourceRate = cnyRatesByCurrency[String(sourceCurrency || "").toUpperCase()];
+    const targetRate = cnyRatesByCurrency[String(targetCurrency || "").toUpperCase()];
+    if (!Number.isFinite(amount) || !Number.isFinite(sourceRate) || !Number.isFinite(targetRate) || targetRate <= 0) {
+      return Number.POSITIVE_INFINITY;
+    }
+    const cnyAmount = amount * sourceRate;
+    return cnyAmount / targetRate;
+  }
+
+  function rankRegionalPrices(accountPrices, cnyRatesByCurrency, displayCurrency = "CNY") {
+    const normalizedDisplayCurrency = normalizeDisplayCurrency(displayCurrency);
+
     return accountPrices
       .map((entry) => {
         if (!entry.price.available) {
@@ -152,23 +186,28 @@
             label: entry.label,
             available: false,
             price: entry.price,
-            cnyAmount: Number.POSITIVE_INFINITY,
+            displayCurrency: normalizedDisplayCurrency,
+            displayAmount: Number.POSITIVE_INFINITY,
           };
         }
 
-        const rate = cnyRatesByCurrency[entry.price.currency];
-        const cnyAmount =
-          typeof rate === "number" ? minorToMajor(entry.price.finalMinor) * rate : Number.POSITIVE_INFINITY;
+        const displayAmount = convertCurrencyAmount(
+          minorToMajor(entry.price.finalMinor),
+          entry.price.currency,
+          normalizedDisplayCurrency,
+          cnyRatesByCurrency
+        );
 
         return {
           accountKey: entry.accountKey,
           label: entry.label,
-          available: Number.isFinite(cnyAmount),
+          available: Number.isFinite(displayAmount),
           price: entry.price,
-          cnyAmount,
+          displayCurrency: normalizedDisplayCurrency,
+          displayAmount,
         };
       })
-      .sort((a, b) => a.cnyAmount - b.cnyAmount);
+      .sort((a, b) => a.displayAmount - b.displayAmount);
   }
 
   function parseOwnedAppIds(webApiBody) {
@@ -183,11 +222,12 @@
       .map((account) => account.key);
   }
 
-  function formatCnyAmount(value) {
-    return Number.isFinite(value) ? `approx CNY ${value.toFixed(2)}` : "";
+  function formatDisplayAmount(value, displayCurrency = "CNY") {
+    const currency = normalizeDisplayCurrency(displayCurrency);
+    return Number.isFinite(value) ? `approx ${currency} ${value.toFixed(2)}` : "";
   }
 
-  function buildRecommendation(owners, rankedPrices, accounts) {
+  function buildRecommendation(owners, rankedPrices, accounts, displayCurrency = "CNY") {
     const labelByKey = new Map(accounts.map((account) => [account.key, account.label]));
 
     if (owners.length > 0) {
@@ -205,14 +245,17 @@
     return {
       type: "buy",
       accountKey: cheapest.accountKey,
-      text: `Best current price: ${cheapest.label}, ${formatCnyAmount(cheapest.cnyAmount)}`,
+      text: `Best current price: ${cheapest.label}, ${formatDisplayAmount(cheapest.displayAmount, displayCurrency)}`,
     };
   }
 
   const api = {
     DEFAULT_ACCOUNTS,
     COUNTRY_OPTIONS,
+    DISPLAY_CURRENCY_OPTIONS,
     findCountryOption,
+    findDisplayCurrency,
+    normalizeDisplayCurrency,
     extractAppId,
     normalizeCountryCode,
     normalizeAccounts,
@@ -220,10 +263,11 @@
     normalizeStorePrice,
     minorToMajor,
     buildCnyRates,
+    convertCurrencyAmount,
     rankRegionalPrices,
     parseOwnedAppIds,
     findOwners,
-    formatCnyAmount,
+    formatDisplayAmount,
     buildRecommendation,
   };
 
@@ -295,6 +339,7 @@ let PluginEntryPointMain = function () {
     function defaultSettings() {
       return {
         apiKey: "",
+        displayCurrency: "CNY",
         accounts: core.DEFAULT_ACCOUNTS.map((account) => ({ ...account })),
       };
     }
@@ -313,6 +358,7 @@ let PluginEntryPointMain = function () {
 
       return {
         apiKey: legacy.apiKey || "",
+        displayCurrency: "CNY",
         accounts: legacyOrder.map(([key, label, cc]) => ({
           key,
           label,
@@ -327,6 +373,7 @@ let PluginEntryPointMain = function () {
       const settings = {
         ...defaultSettings(),
         ...stored,
+        displayCurrency: core.normalizeDisplayCurrency(stored.displayCurrency),
         accounts: core.normalizeAccounts(stored.accounts).length
           ? core.normalizeAccounts(stored.accounts)
           : defaultSettings().accounts,
@@ -497,6 +544,14 @@ let PluginEntryPointMain = function () {
       `;
     }
 
+    function currencyOptions(selectedCurrency) {
+      const current = core.normalizeDisplayCurrency(selectedCurrency);
+      return core.DISPLAY_CURRENCY_OPTIONS.map(
+        (currency) =>
+          `<option value="${escapeHtml(currency.code)}"${currency.code === current ? " selected" : ""}>${escapeHtml(currency.code)} - ${escapeHtml(currency.label)}</option>`
+      ).join("");
+    }
+
     function collectSettings(form) {
       const formData = new FormData(form);
       const accountRows = Array.from(form.querySelectorAll(".smrh-account-row"));
@@ -515,6 +570,7 @@ let PluginEntryPointMain = function () {
 
       return {
         apiKey: String(formData.get("apiKey") || "").trim(),
+        displayCurrency: core.normalizeDisplayCurrency(formData.get("displayCurrency")),
         accounts: core.normalizeAccounts(accounts),
       };
     }
@@ -535,6 +591,12 @@ let PluginEntryPointMain = function () {
           <div class="smrh-field">
             <label>Steam Web API Key</label>
             <input name="apiKey" type="password" autocomplete="off" value="${escapeHtml(settings.apiKey)}">
+          </div>
+          <div class="smrh-field">
+            <label>Display currency</label>
+            <select name="displayCurrency">
+              ${currencyOptions(settings.displayCurrency)}
+            </select>
           </div>
           <div class="smrh-account-list" id="smrh-account-list">
             ${editableAccounts.map(accountRow).join("")}
@@ -697,10 +759,11 @@ let PluginEntryPointMain = function () {
       return { ownedByAccount, errors };
     }
 
-    function renderSummary(panel, appId, accounts, accountPrices, rates, ownedResult) {
+    function renderSummary(panel, appId, accounts, accountPrices, rates, ownedResult, settings) {
       const owners = core.findOwners(appId, ownedResult.ownedByAccount, accounts);
-      const ranked = core.rankRegionalPrices(accountPrices, rates);
-      const recommendation = core.buildRecommendation(owners, ranked, accounts);
+      const displayCurrency = core.normalizeDisplayCurrency(settings.displayCurrency);
+      const ranked = core.rankRegionalPrices(accountPrices, rates, displayCurrency);
+      const recommendation = core.buildRecommendation(owners, ranked, accounts, displayCurrency);
       const rankedByAccount = new Map(ranked.map((entry) => [entry.accountKey, entry]));
       const cheapest = ranked.find((entry) => entry.available);
 
@@ -712,14 +775,14 @@ let PluginEntryPointMain = function () {
           const priceText = entry.price.available
             ? entry.price.finalFormatted || `${(entry.price.finalMinor / 100).toFixed(2)} ${entry.price.currency}`
             : "No price";
-          const cnyText = rank ? core.formatCnyAmount(rank.cnyAmount) : "";
+          const displayText = rank ? core.formatDisplayAmount(rank.displayAmount, displayCurrency) : "";
 
           return `
             <div class="smrh-row${owned ? " owned" : ""}${best ? " best" : ""}">
               <div class="smrh-region">${escapeHtml(entry.label)} <span class="smrh-sub">(${escapeHtml(entry.cc)})</span></div>
               <div class="smrh-price">
                 <span>${escapeHtml(priceText)}</span>
-                ${cnyText ? `<small>${escapeHtml(cnyText)}</small>` : ""}
+                ${displayText ? `<small>${escapeHtml(displayText)}</small>` : ""}
               </div>
               <div class="smrh-status">${owned ? "Owned" : ""}</div>
             </div>
@@ -771,7 +834,7 @@ let PluginEntryPointMain = function () {
           loadRates(),
           loadOwned(settings, accounts, forceRefresh),
         ]);
-        renderSummary(panel, appId, accounts, accountPrices, rates, ownedResult);
+        renderSummary(panel, appId, accounts, accountPrices, rates, ownedResult, settings);
       } catch (error) {
         renderError(panel, error?.message || "Load failed");
       }
