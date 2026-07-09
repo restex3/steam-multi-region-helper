@@ -1,0 +1,12 @@
+{
+  "name": "steam-multi-region-helper",
+  "version": "0.1.0",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "build": "node scripts/build.js",
+    "install:local": "npm run build && node scripts/install-local.js",
+    "package": "npm run build && node scripts/package-release.js",
+    "test": "node tests/core.test.js && node tests/release.test.js && npm run build && node --check .millennium/Dist/index.js && node --check .millennium/Dist/webkit.js && node --check scripts/package-release.js"
+  }
+}
