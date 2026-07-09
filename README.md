@@ -12,25 +12,37 @@ It shows current Steam prices and owned status for the regions/accounts you conf
 
 ## Screenshots
 
-Real Steam client screenshots using Cyberpunk 2077, appid `1091500`. The API key and account identifiers are not shown.
+Real Steam client screenshots. The main price-comparison examples use Sekiro: Shadows Die Twice, appid `814380`; the owned-status example uses Cyberpunk 2077.
 
-### Store page placement
+### Store Page Placement
 
-The panel appears below Steam's purchase and content blocks, so it stays close to the place where you decide whether to buy.
+The panel appears near Steam's purchase block, so the regional comparison stays close to the place where you decide whether to buy.
 
-![Panel placement on a Steam store page](docs/assets/steam-client-placement.png)
+![Panel placement on a Steam store page](docs/assets/steam-client-sekiro-placement.png)
 
-### Helper panel
+### Helper Panel
 
 The panel keeps the current Steam regional prices, approximate display-currency values, owned status, refresh/settings actions, and SteamDB manual-check link in one compact block.
 
-![Steam Multi-Region Helper panel](docs/assets/steam-client-helper-panel.png)
+![Steam Multi-Region Helper panel](docs/assets/steam-client-sekiro-helper-panel.png)
 
-### Owned status and regional rows
+### Owned Status Example
 
-Owned status is shown per configured account row. Regional prices are still shown in Steam's original currency, with an approximate comparison value below.
+When one configured account already owns the app, the panel highlights the owned region/account so you can avoid duplicate purchases.
 
-![Owned status and regional price rows](docs/assets/steam-client-owned-price-rows.png)
+![Owned status example on a Steam store page](docs/assets/steam-client-cyberpunk-2077-panel.png)
+
+### Settings
+
+Configure only the regions/accounts you actually use, choose country/region presets, and set the display currency for approximate comparisons. Sensitive local values are redacted in this screenshot.
+
+![Settings screen with redacted local identifiers](docs/assets/steam-client-settings-redacted.png)
+
+### SteamDB Manual Check
+
+The helper links out to SteamDB for manual historical-price checks instead of scraping or reproducing SteamDB data.
+
+![SteamDB manual check alongside the helper panel](docs/assets/steamdb-manual-check-sekiro.png)
 
 ## What it does
 

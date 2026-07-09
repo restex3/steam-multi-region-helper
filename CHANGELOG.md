@@ -3,7 +3,7 @@
 ## 0.1.1
 
 - Add configurable display currency for approximate comparisons and best-current-price ranking.
-- Add a real Steam client Cyberpunk 2077 screenshot to the README files.
+- Add real Steam client screenshots to the README files, including a redacted settings example and owned-status example.
 - Document DLC, bundle, edition, and package ownership-check limits.
 - Update install and release docs for the 0.1.1 package.
 

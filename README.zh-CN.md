@@ -8,25 +8,37 @@
 
 ## 截图
 
-下面是《赛博朋克 2077》（appid `1091500`）商品页里的真实 Steam 客户端截图。截图不展示 API Key 和账号标识。
+下面是真实 Steam 客户端截图。主要比价示例使用《Sekiro: Shadows Die Twice》（appid `814380`），已拥有状态示例使用《赛博朋克 2077》。
 
 ### 商品页中的位置
 
-面板会出现在 Steam 购买区和内容区下面，离你决定是否购买的位置很近。
+面板会出现在 Steam 购买区附近，离你决定是否购买的位置很近。
 
-![Steam 商品页中的面板位置](docs/assets/steam-client-placement.png)
+![Steam 商品页中的面板位置](docs/assets/steam-client-sekiro-placement.png)
 
 ### 助手面板
 
 面板把当前 Steam 各区价格、约合展示货币、拥有状态、刷新/设置按钮和 SteamDB 手动核验入口放在一个紧凑区域里。
 
-![Steam Multi-Region Helper 面板](docs/assets/steam-client-helper-panel.png)
+![Steam Multi-Region Helper 面板](docs/assets/steam-client-sekiro-helper-panel.png)
 
-### 拥有状态和地区价格行
+### 已拥有状态示例
 
-拥有状态按你配置的账号行展示。地区价格仍然保留 Steam 返回的原始货币，下面显示约合金额。
+如果某个已配置账号已经拥有当前游戏，面板会高亮对应地区/账号，方便你避免重复购买。
 
-![拥有状态和地区价格行](docs/assets/steam-client-owned-price-rows.png)
+![Steam 商品页中的已拥有状态示例](docs/assets/steam-client-cyberpunk-2077-panel.png)
+
+### 设置页
+
+只配置你实际使用的地区/账号，可以用国家/地区下拉选项，也可以选择约合金额使用的展示货币。截图里的本地敏感值已经打码。
+
+![打码后的设置页](docs/assets/steam-client-settings-redacted.png)
+
+### SteamDB 手动核验
+
+助手只提供 SteamDB 手动核验入口，不抓取 SteamDB，也不在插件里复刻史低判断。
+
+![助手面板与 SteamDB 手动核验](docs/assets/steamdb-manual-check-sekiro.png)
 
 ## 它能做什么
 
