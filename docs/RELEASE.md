@@ -17,7 +17,7 @@ The release zip is written to:
 
 The zip contains the plugin folder expected by Millennium:
 
-`steam-region-buyer`
+`steam-multi-region-helper`
 
 It includes:
 
@@ -25,6 +25,8 @@ It includes:
 - `.millennium`
 - `backend`
 - `README.md`
+- `README.zh-CN.md`
+- `CONTRIBUTING.md`
 - `LICENSE`
 - `CHANGELOG.md`
 - `docs`
@@ -39,3 +41,4 @@ It does not include the development test suite or local install script.
 4. Upload `release\steam-multi-region-helper-v0.1.0.zip`.
 5. In the release notes, state clearly that the plugin only compares current Steam prices and owned status.
 6. Mention that SteamDB historical lows should still be checked manually.
+7. Mention that this is an unofficial third-party plugin and users should review Steam/Millennium risks themselves.

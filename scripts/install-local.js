@@ -2,7 +2,8 @@ const fs = require("fs");
 const path = require("path");
 
 const root = path.resolve(__dirname, "..");
-const target = "D:/Program Files (x86)/Steam/millennium/plugins/steam-region-buyer";
+const target = "D:/Program Files (x86)/Steam/millennium/plugins/steam-multi-region-helper";
+const legacyTarget = "D:/Program Files (x86)/Steam/millennium/plugins/steam-region-buyer";
 const included = ["package.json", "plugin.json", "README.md", ".millennium", "backend", "scripts", "src", "tests"];
 
 function copyRecursive(source, destination) {
@@ -18,6 +19,7 @@ function copyRecursive(source, destination) {
   fs.copyFileSync(source, destination);
 }
 
+fs.rmSync(legacyTarget, { recursive: true, force: true });
 fs.rmSync(target, { recursive: true, force: true });
 fs.mkdirSync(target, { recursive: true });
 

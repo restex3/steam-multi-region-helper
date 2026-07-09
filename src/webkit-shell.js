@@ -1,5 +1,5 @@
 const MILLENNIUM_IS_CLIENT_MODULE = false;
-const pluginName = "steam-region-buyer";
+const pluginName = "steam-multi-region-helper";
 
 function InitializePlugins() {
   const pluginList = (window.PLUGIN_LIST ||= {});

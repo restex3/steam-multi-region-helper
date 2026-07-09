@@ -8,3 +8,5 @@
 - Add customizable account rows with country/region presets and custom country-code support.
 - Add a manual SteamDB link for historical-price review.
 - Add local install and release packaging scripts.
+- Rename the public plugin id to `steam-multi-region-helper`.
+- Add English and Chinese documentation, contribution notes, and privacy/Steam boundary notes.

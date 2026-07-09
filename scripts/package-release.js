@@ -17,6 +17,8 @@ function getReleaseEntries() {
   return [
     { source: "plugin.json" },
     { source: "README.md" },
+    { source: "README.zh-CN.md" },
+    { source: "CONTRIBUTING.md" },
     { source: "LICENSE" },
     { source: "CHANGELOG.md" },
     { source: "docs" },

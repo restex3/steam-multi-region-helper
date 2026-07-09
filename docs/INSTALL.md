@@ -19,7 +19,7 @@ Steam Multi-Region Helper is a small Millennium plugin for the Steam desktop cli
 
 4. Extract the zip so the folder below exists:
 
-   `D:\Program Files (x86)\Steam\millennium\plugins\steam-region-buyer`
+   `D:\Program Files (x86)\Steam\millennium\plugins\steam-multi-region-helper`
 
 5. Start Steam.
 6. Open a Steam store app page such as:
@@ -58,3 +58,4 @@ You can still choose `Custom country code` and enter any two-letter Steam countr
 - If owned status does not load, check that the API key is valid and the account's game details are visible to the Steam Web API.
 - If a regional price is missing, Steam may not have a public price for that country code, or the game may not be available in that region.
 - If Steam clears or disables the plugin, close Steam, reinstall the release folder, and confirm Millennium lists the plugin as enabled.
+- If you used an early local build named `steam-region-buyer`, remove that old folder before installing this release.
