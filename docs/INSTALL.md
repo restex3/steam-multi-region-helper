@@ -11,7 +11,7 @@ Steam Multi-Region Helper is a small Millennium plugin for the Steam desktop cli
 
 ## Install from a release zip
 
-1. Download `steam-multi-region-helper-v0.1.1.zip` from the GitHub release.
+1. Download `steam-multi-region-helper-v0.1.2.zip` from the GitHub release.
 2. Close Steam completely.
 3. Open your Steam Millennium plugin folder:
 

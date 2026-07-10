@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.2
+
+- Replace the external `curl.exe` owned-game requests with Millennium's built-in HTTP client.
+- Prevent visible Command Prompt windows during owned-game checks.
+- Keep multi-account owned-game checks within Millennium's 30-second RPC limit by applying per-request and total time budgets.
+- Add a regression test that rejects external command execution in the Lua backend.
+
 ## 0.1.1
 
 - Add configurable display currency for approximate comparisons and best-current-price ranking.

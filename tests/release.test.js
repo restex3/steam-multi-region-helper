@@ -5,7 +5,7 @@ assert.strictEqual(
   release.makeReleaseFolderName({ name: "steam-multi-region-helper" }),
   "steam-multi-region-helper"
 );
-assert.strictEqual(release.makeReleaseZipName("0.1.1"), "steam-multi-region-helper-v0.1.1.zip");
+assert.strictEqual(release.makeReleaseZipName("0.1.2"), "steam-multi-region-helper-v0.1.2.zip");
 
 assert.deepStrictEqual(
   release.getReleaseEntries().map((entry) => entry.source),

@@ -98,7 +98,7 @@ npm run package
 
 打包产物会生成在：
 
-`release\steam-multi-region-helper-v0.1.1.zip`
+`release\steam-multi-region-helper-v0.1.2.zip`
 
 ## 欢迎 PR
 

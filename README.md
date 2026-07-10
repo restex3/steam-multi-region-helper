@@ -4,7 +4,7 @@ A small unofficial Millennium plugin for the Steam desktop client.
 
 It shows current Steam prices and owned status for the regions/accounts you configure. It is meant for users who already own multiple Steam accounts and want a quick way to avoid duplicate purchases.
 
-![Status](https://img.shields.io/badge/status-v0.1.1-blue)
+![Status](https://img.shields.io/badge/status-v0.1.2-blue)
 ![Platform](https://img.shields.io/badge/platform-Windows%20Steam-66c0f4)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
@@ -109,7 +109,7 @@ npm run package
 
 `npm run package` creates:
 
-`release\steam-multi-region-helper-v0.1.1.zip`
+`release\steam-multi-region-helper-v0.1.2.zip`
 
 ## Contributing
 

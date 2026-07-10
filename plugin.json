@@ -3,6 +3,6 @@
   "name": "steam-multi-region-helper",
   "common_name": "Steam Multi-Region Helper",
   "description": "Shows current Steam prices and owned-account status for your configured regions inside Steam store app pages.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "backendType": "lua"
 }
